@@ -1,0 +1,6 @@
+id: xyz.maubot.media
+version: 1.0.0
+license: MIT
+modules:
+- media
+main_class: MediaBot
