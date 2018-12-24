@@ -1,22 +1,13 @@
-from maubot import Plugin, CommandSpec, PassiveCommand, MessageEvent
+from typing import Tuple
 
-COMMAND_MEDIA = "xyz.maubot.media"
+from mautrix.types import MessageType
+from maubot import Plugin, MessageEvent
+from maubot.handlers import command
 
 
 class MediaBot(Plugin):
-    async def start(self) -> None:
-        self.set_command_spec(CommandSpec(
-            passive_commands=[PassiveCommand(
-                name=COMMAND_MEDIA,
-                matches="mxc://.+/.+",
-                match_against="url",
-            )],
-        ))
-        self.client.add_command_handler(COMMAND_MEDIA, self.handler)
-
-    async def stop(self) -> None:
-        self.client.remove_command_handler(COMMAND_MEDIA, self.handler)
-
-    @staticmethod
-    async def handler(evt: MessageEvent) -> None:
-        await evt.respond(f"MXC URI: `{evt.content.url}`")
+    @command.passive("^mxc://.+/.+$", field=lambda evt: evt.content.url,
+                     msgtypes=(MessageType.IMAGE, MessageType.FILE, MessageType.AUDIO,
+                               MessageType.STICKER))
+    async def handler(self, evt: MessageEvent, url: Tuple[str]) -> None:
+        await evt.respond(f"MXC URI: `{url[0]}`")
