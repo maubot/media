@@ -6,8 +6,8 @@ from maubot.handlers import command
 
 
 class MediaBot(Plugin):
-    @command.passive("^mxc://.+/.+$", field=lambda evt: evt.content.url,
+    @command.passive("^mxc://.+/.+$", field=lambda evt: evt.content.url or "",
                      msgtypes=(MessageType.IMAGE, MessageType.FILE, MessageType.AUDIO,
-                               MessageType.STICKER))
+                               MessageType.VIDEO, MessageType.STICKER))
     async def handler(self, evt: MessageEvent, url: Tuple[str]) -> None:
         await evt.respond(f"MXC URI: `{url[0]}`")
